@@ -1,0 +1,27 @@
+{
+    "attributes": [
+      {
+        "trait_type": "Color",
+        "value": "Blue"
+      },
+      {
+        "trait_type": "Winner Name",
+        "value": "Nikhil Kajota"
+      },
+      {
+        "trait_type": "Winner ID",
+        "value": "234"
+      },
+      {
+        "trait_type": "Game Name",
+        "value": "Cricket"
+      },
+      {
+        "trait_type": "Game ID",
+        "value": "2"
+      }
+    ],
+    "description": "Winner game NFT",
+    "image": "https://tan-brilliant-snail-488.mypinata.cloud/ipfs/QmfF29tTa1uC1Hi8zys9pHuawQBix8byLJN7NSa1ZjGBUZ"
+  }
+  

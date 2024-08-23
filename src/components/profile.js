@@ -1283,10 +1283,6 @@ const Profile = () => {
     }
   };
 
-
-
-
-
   const handleWithdrawal = async () => {
     const stakingAbi = [
       {
@@ -1388,6 +1384,19 @@ const Profile = () => {
           {
             indexed: true,
             internalType: "address",
+            name: "newServiceAdmin",
+            type: "address",
+          },
+        ],
+        name: "ServiceAdminSet",
+        type: "event",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: "address",
             name: "from",
             type: "address",
           },
@@ -1466,19 +1475,6 @@ const Profile = () => {
             internalType: "address",
             name: "",
             type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "TenupBalance",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
           },
         ],
         stateMutability: "view",
@@ -1598,6 +1594,19 @@ const Profile = () => {
       },
       {
         inputs: [],
+        name: "tenupBalance",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
         name: "unpause",
         outputs: [],
         stateMutability: "nonpayable",
@@ -1712,14 +1721,14 @@ const Profile = () => {
             type: "bytes",
           },
         ],
-        name: "withdrawTenupUser",
+        name: "withdrawTenupToken",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
       },
     ];
 
-    const stakingContractAddress = "0x70a74F1D5640beEC9669abd53034be25dc91eCC2";
+    const stakingContractAddress = "0x1c588e39e574277edf13f45aa2f4e4a111ac81b7";
 
     //0x11F5720487E229f3C4C0A2F2735fA7959e8adf91
     let [signer, provider, chainId] = [null, null, null];
@@ -1734,121 +1743,61 @@ const Profile = () => {
     );
 
     const walletAddress = "0xd5b4FACFef52Be594F9E4B6d91f1923Ba514fA57";
-    const balance = 1;
+    // const balance = 1;
 
     const token =
-      "eyJhbGciOiJSUzI1NiIsImtpZCI6IjBjYjQyNzQyYWU1OGY0ZGE0NjdiY2RhZWE0Yjk1YTI5ZmJhMGM1ZjkiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiTklLSElMIEtBSk9UQSIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NLRVJnWHJJT2d3OGVMRTU2aGZOb2RMUE9iSkJGTlRkbXRhQXdfT01JVV9zT2xBb1QwPXM5Ni1jIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2h5cGVyLWNhc3VhbC1nYW1pbmciLCJhdWQiOiJoeXBlci1jYXN1YWwtZ2FtaW5nIiwiYXV0aF90aW1lIjoxNzIxODk5MzI3LCJ1c2VyX2lkIjoiT3MxSVJvcHRCb1dsNVFnblV5MUt4c2ZaV0R5MiIsInN1YiI6Ik9zMUlSb3B0Qm9XbDVRZ25VeTFLeHNmWldEeTIiLCJpYXQiOjE3MjE4OTkzMjcsImV4cCI6MTcyMTkwMjkyNywiZW1haWwiOiIyMHVtZTAzMEBsbm1paXQuYWMuaW4iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJnb29nbGUuY29tIjpbIjEwNTM1MDA3ODU3OTY4ODU4OTA0MCJdLCJlbWFpbCI6WyIyMHVtZTAzMEBsbm1paXQuYWMuaW4iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJnb29nbGUuY29tIn19.nFuTbBODkbizo3YIm4wWWbKqVwcpHBRrufydk6r9DNPO9JntouussCvRG2wTsikzyCpG1Pe6E5LcpMeyF6Hdm0h-5YiOAb6DwylSO6zFLcuVfiWet_IT_gLN1nnE33CLtlsmY5WzTCvC_jZVAtGr0n-2B2k96wdpzFwUPFJ-qFUv9DWR-lzX8EdljnZMmfkUZnTTsXgHGKgR4fTMrjdwl7ZTlI5w1TcsFQqQVWQduhDyZVOCe56gkGGkdAxin_ZJ3NfkoN_HerWBsMWVOisfAgZdiqoo6FgBT6-NJz-tJfYwa-8lL1eFVj-rw57KJdGgY-03fGuux0jfGlp2Zkbp6Q";
+      "eyJhbGciOiJSUzI1NiIsImtpZCI6ImQ0MjY5YTE3MzBlNTA3MTllNmIxNjA2ZTQyYzNhYjMyYjEyODA0NDkiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiYWJoaXNoZWsgc29raGFsIiwiaXNzIjoiaHR0cHM6Ly9zZWN1cmV0b2tlbi5nb29nbGUuY29tL2h5cGVyLWNhc3VhbC1nYW1pbmciLCJhdWQiOiJoeXBlci1jYXN1YWwtZ2FtaW5nIiwiYXV0aF90aW1lIjoxNzI0NDEwOTExLCJ1c2VyX2lkIjoid1RCTEdVYU5VT1BrcTZleU9uU0h1a1dQTkJrMiIsInN1YiI6IndUQkxHVWFOVU9Qa3E2ZXlPblNIdWtXUE5CazIiLCJpYXQiOjE3MjQ0MTA5MTEsImV4cCI6MTcyNDQxNDUxMSwiZW1haWwiOiJhYmhpc2hla3Nva2hhbEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZW1haWwiOlsiYWJoaXNoZWtzb2toYWxAZ21haWwuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.p3BoLCcSHgxJfv1gSNp4pYcIgwCaMS_E-FEmZuDYJ0u5xuWS0XenjjcC8VL-xsEItuH1G2AqtSfH7Yus5IUuKbPKflOKGv-CAYDIlSw7ChqG0jyqjja5elPLbn4bPUdRwftOxEGw3GI3q0kpU7_gNAwGgJYrvrq4Z65PweR-Vj9SPKHSapznLWk4g92iNeSTRboZCxzJwH3Vr63HUtw9XdhNRoiBqnCEtrvz6iHGjmsc5JA2LEqZLUbqvcTHR3RrD14u0jHkAWdko1_DhuxnKVWtKZCmohOo-RFYZ3FrrsITQre6UpfDR6A1oChx-3FyzaTphnOG6I8ow-bjAxWuPA";
 
     try {
-      const response = await fetch(`http://localhost:5000/withdrawTenup`, {
+      const response = await fetch(`https://3.9.17.152/withdrawTenup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          address: "0xd5b4FACFef52Be594F9E4B6d91f1923Ba514fA57",
           amount: withdrawAmount,
-          address: walletAddress,
         }),
       });
 
+      //address here is the connected wallet address
+
       const responseData = await response.json();
 
-      console.log("---------->", responseData);
+      console.log("response------>", responseData);
 
-      if (response.status === 201) {
-        const { signature, amount, token, to, nonce, deadline } = responseData;
+      console.log(
+        "---------->",
+        responseData.data.amount,
+        responseData.data.token,
+        responseData.data.to,
+        responseData.data.nonce,
+        responseData.data.deadline,
+        responseData.data.signature
+      );
 
-        console.log(
-          "-=============>'''''''",
-          amount,
-          token,
-          to,
-          nonce,
-          deadline,
-          signature
-        );
+const txnWithdraw = await stakingContract.withdrawTenupToken(
+  "12000000000000000000",
+  "0xd36d0f2a213F8B82fCfD838FD4C79be8632381B8",
+  "0xd5b4FACFef52Be594F9E4B6d91f1923Ba514fA57",
+  1724411527153,
+  1724411827,
+  "0x8050a0eefaf01705336731570dafc02323893ea74a1ef2799d97c3ecb56c6be14c505af6e2f378544852e8b9ba360f63ad8279d8acc108b93df7910de2757f021b",
+  {
+    gasLimit: ethers.BigNumber.from("1000000") // Adjust this to appropriate limit
+  }
+);
 
-        const txnWithdraw = await stakingContract.withdrawTenupUser(
-          amount,
-          token,
-          to,
-          nonce,
-          deadline,
-          signature
-        );
-        await txnWithdraw.wait();
-        console.log("Amount withdrawn successfully");
-      } else {
-        console.error("Withdrawal failed:", responseData.errors);
-      }
+      await txnWithdraw.wait();
+      console.log("Amount withdrawn successfully");
     } catch (error) {
       console.error("Error during withdrawal:", error);
     }
   };
 
-
   const handleApprove = async () => {
-
-
-
-
     const stakeTokenAbi = [
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "spender",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "value",
-            type: "uint256",
-          },
-        ],
-        name: "approve",
-        outputs: [
-          {
-            internalType: "bool",
-            name: "",
-            type: "bool",
-          },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "value",
-            type: "uint256",
-          },
-        ],
-        name: "burn",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "account",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "value",
-            type: "uint256",
-          },
-        ],
-        name: "burnFrom",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
       {
         inputs: [
           {
@@ -2035,24 +1984,6 @@ const Profile = () => {
         inputs: [
           {
             internalType: "address",
-            name: "to",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-        ],
-        name: "mint",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
             name: "owner",
             type: "address",
           },
@@ -2133,13 +2064,6 @@ const Profile = () => {
         type: "event",
       },
       {
-        inputs: [],
-        name: "pause",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
         anonymous: false,
         inputs: [
           {
@@ -2151,6 +2075,294 @@ const Profile = () => {
         ],
         name: "Paused",
         type: "event",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: "address",
+            name: "from",
+            type: "address",
+          },
+          {
+            indexed: true,
+            internalType: "address",
+            name: "to",
+            type: "address",
+          },
+          {
+            indexed: false,
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        name: "Transfer",
+        type: "event",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: false,
+            internalType: "address",
+            name: "account",
+            type: "address",
+          },
+        ],
+        name: "Unpaused",
+        type: "event",
+      },
+      {
+        inputs: [],
+        name: "DOMAIN_SEPARATOR",
+        outputs: [
+          {
+            internalType: "bytes32",
+            name: "",
+            type: "bytes32",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "spender",
+            type: "address",
+          },
+        ],
+        name: "allowance",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "spender",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        name: "approve",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "account",
+            type: "address",
+          },
+        ],
+        name: "balanceOf",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        name: "burn",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "account",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "value",
+            type: "uint256",
+          },
+        ],
+        name: "burnFrom",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "decimals",
+        outputs: [
+          {
+            internalType: "uint8",
+            name: "",
+            type: "uint8",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "eip712Domain",
+        outputs: [
+          {
+            internalType: "bytes1",
+            name: "fields",
+            type: "bytes1",
+          },
+          {
+            internalType: "string",
+            name: "name",
+            type: "string",
+          },
+          {
+            internalType: "string",
+            name: "version",
+            type: "string",
+          },
+          {
+            internalType: "uint256",
+            name: "chainId",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "verifyingContract",
+            type: "address",
+          },
+          {
+            internalType: "bytes32",
+            name: "salt",
+            type: "bytes32",
+          },
+          {
+            internalType: "uint256[]",
+            name: "extensions",
+            type: "uint256[]",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "to",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+        ],
+        name: "mint",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "name",
+        outputs: [
+          {
+            internalType: "string",
+            name: "",
+            type: "string",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address",
+          },
+        ],
+        name: "nonces",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "owner",
+        outputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "pause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "paused",
+        outputs: [
+          {
+            internalType: "bool",
+            name: "",
+            type: "bool",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
       },
       {
         inputs: [
@@ -2203,6 +2415,32 @@ const Profile = () => {
         type: "function",
       },
       {
+        inputs: [],
+        name: "symbol",
+        outputs: [
+          {
+            internalType: "string",
+            name: "",
+            type: "string",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "totalSupply",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
         inputs: [
           {
             internalType: "address",
@@ -2225,31 +2463,6 @@ const Profile = () => {
         ],
         stateMutability: "nonpayable",
         type: "function",
-      },
-      {
-        anonymous: false,
-        inputs: [
-          {
-            indexed: true,
-            internalType: "address",
-            name: "from",
-            type: "address",
-          },
-          {
-            indexed: true,
-            internalType: "address",
-            name: "to",
-            type: "address",
-          },
-          {
-            indexed: false,
-            internalType: "uint256",
-            name: "value",
-            type: "uint256",
-          },
-        ],
-        name: "Transfer",
-        type: "event",
       },
       {
         inputs: [
@@ -2298,215 +2511,6 @@ const Profile = () => {
         name: "unpause",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        anonymous: false,
-        inputs: [
-          {
-            indexed: false,
-            internalType: "address",
-            name: "account",
-            type: "address",
-          },
-        ],
-        name: "Unpaused",
-        type: "event",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "spender",
-            type: "address",
-          },
-        ],
-        name: "allowance",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "account",
-            type: "address",
-          },
-        ],
-        name: "balanceOf",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "decimals",
-        outputs: [
-          {
-            internalType: "uint8",
-            name: "",
-            type: "uint8",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "DOMAIN_SEPARATOR",
-        outputs: [
-          {
-            internalType: "bytes32",
-            name: "",
-            type: "bytes32",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "eip712Domain",
-        outputs: [
-          {
-            internalType: "bytes1",
-            name: "fields",
-            type: "bytes1",
-          },
-          {
-            internalType: "string",
-            name: "name",
-            type: "string",
-          },
-          {
-            internalType: "string",
-            name: "version",
-            type: "string",
-          },
-          {
-            internalType: "uint256",
-            name: "chainId",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "verifyingContract",
-            type: "address",
-          },
-          {
-            internalType: "bytes32",
-            name: "salt",
-            type: "bytes32",
-          },
-          {
-            internalType: "uint256[]",
-            name: "extensions",
-            type: "uint256[]",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "name",
-        outputs: [
-          {
-            internalType: "string",
-            name: "",
-            type: "string",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "owner",
-            type: "address",
-          },
-        ],
-        name: "nonces",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "owner",
-        outputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "paused",
-        outputs: [
-          {
-            internalType: "bool",
-            name: "",
-            type: "bool",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "symbol",
-        outputs: [
-          {
-            internalType: "string",
-            name: "",
-            type: "string",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "totalSupply",
-        outputs: [
-          {
-            internalType: "uint256",
-            name: "",
-            type: "uint256",
-          },
-        ],
-        stateMutability: "view",
         type: "function",
       },
     ];
@@ -2593,6 +2597,13 @@ const Profile = () => {
         type: "event",
       },
       {
+        inputs: [],
+        name: "pause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
         anonymous: false,
         inputs: [
           {
@@ -2604,6 +2615,50 @@ const Profile = () => {
         ],
         name: "Paused",
         type: "event",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "token",
+            type: "address",
+          },
+        ],
+        name: "receiveTokens",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: "address",
+            name: "newServiceAdmin",
+            type: "address",
+          },
+        ],
+        name: "ServiceAdminSet",
+        type: "event",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "_ServiceAdmin",
+            type: "address",
+          },
+        ],
+        name: "setServiceAdmin",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
       },
       {
         anonymous: false,
@@ -2656,6 +2711,13 @@ const Profile = () => {
         type: "event",
       },
       {
+        inputs: [],
+        name: "unpause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
         anonymous: false,
         inputs: [
           {
@@ -2669,55 +2731,54 @@ const Profile = () => {
         type: "event",
       },
       {
-        inputs: [],
-        name: "ServiceAdmin",
-        outputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "TenupAdmin",
-        outputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "TenupBalance",
-        outputs: [
+        inputs: [
           {
             internalType: "uint256",
-            name: "",
+            name: "amount",
             type: "uint256",
           },
         ],
-        stateMutability: "view",
+        name: "withdrawTenup",
+        outputs: [],
+        stateMutability: "nonpayable",
         type: "function",
       },
       {
-        inputs: [],
-        name: "TenupToken",
-        outputs: [
+        inputs: [
           {
-            internalType: "contract IERC20",
-            name: "",
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "token",
             type: "address",
           },
+          {
+            internalType: "address",
+            name: "to",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "nonce",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "deadline",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "signature",
+            type: "bytes",
+          },
         ],
-        stateMutability: "view",
+        name: "withdrawTenupToken",
+        outputs: [],
+        stateMutability: "nonpayable",
         type: "function",
       },
       {
@@ -2765,13 +2826,6 @@ const Profile = () => {
       },
       {
         inputs: [],
-        name: "pause",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [],
         name: "paused",
         outputs: [
           {
@@ -2784,46 +2838,55 @@ const Profile = () => {
         type: "function",
       },
       {
-        inputs: [
+        inputs: [],
+        name: "ServiceAdmin",
+        outputs: [
           {
             internalType: "address",
-            name: "from",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "token",
+            name: "",
             type: "address",
           },
         ],
-        name: "receiveTokens",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "_ServiceAdmin",
-            type: "address",
-          },
-        ],
-        name: "setServiceAdmin",
-        outputs: [],
-        stateMutability: "nonpayable",
+        stateMutability: "view",
         type: "function",
       },
       {
         inputs: [],
-        name: "unpause",
-        outputs: [],
-        stateMutability: "nonpayable",
+        name: "TenupAdmin",
+        outputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "tenupBalance",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "TenupToken",
+        outputs: [
+          {
+            internalType: "contract IERC20",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
         type: "function",
       },
       {
@@ -2889,60 +2952,9 @@ const Profile = () => {
         stateMutability: "view",
         type: "function",
       },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-        ],
-        name: "withdrawTenup",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "token",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "to",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "nonce",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "deadline",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes",
-            name: "signature",
-            type: "bytes",
-          },
-        ],
-        name: "withdrawTenupUser",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
     ];
 
-    const stakingContractAddress = "0x70a74F1D5640beEC9669abd53034be25dc91eCC2";
+    const stakingContractAddress = "0x1c588e39e574277edf13f45aa2f4e4a111ac81b7";
     // const stakingContractAddress =   "0x62Bc2328a27e258E61Ee7d0cdcb7124F979150d9";
 
     const stakeTokenContractAddress =
@@ -2963,7 +2975,6 @@ const Profile = () => {
       stakeTokenAbi,
       signer
     );
-
 
     if (!lendAmount || !stakeTokenContract) {
       console.error("Lend amount and token contract are required");
@@ -2973,15 +2984,20 @@ const Profile = () => {
     setLoading(true);
     try {
       const amount = ethers.utils.parseUnits(lendAmount, 18);
-      const txnApproval = await stakeTokenContract.approve(stakingContractAddress, amount);
+      const txnApproval = await stakeTokenContract.approve(
+        stakingContractAddress,
+        amount
+      );
       await txnApproval.wait();
       console.log("Approval transaction confirmed");
     } catch (error) {
-      if (error.code === 'TRANSACTION_REPLACED') {
-        if (error.replacement.reason === 'repriced') {
+      if (error.code === "TRANSACTION_REPLACED") {
+        if (error.replacement.reason === "repriced") {
           console.log("Transaction was replaced with a higher gas price");
         } else {
-          console.error("Transaction was replaced with a different transaction");
+          console.error(
+            "Transaction was replaced with a different transaction"
+          );
         }
       } else {
         console.error("Error during lending:", error);
@@ -2990,12 +3006,7 @@ const Profile = () => {
     setLoading(false);
   };
 
-
-
-
   const handleLend = async () => {
-
-
     const stakeTokenAbi = [
       {
         inputs: [
@@ -3796,6 +3807,13 @@ const Profile = () => {
         type: "event",
       },
       {
+        inputs: [],
+        name: "pause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
         anonymous: false,
         inputs: [
           {
@@ -3807,6 +3825,50 @@ const Profile = () => {
         ],
         name: "Paused",
         type: "event",
+      },
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "token",
+            type: "address",
+          },
+        ],
+        name: "receiveTokens",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: "address",
+            name: "newServiceAdmin",
+            type: "address",
+          },
+        ],
+        name: "ServiceAdminSet",
+        type: "event",
+      },
+      {
+        inputs: [
+          {
+            internalType: "address",
+            name: "_ServiceAdmin",
+            type: "address",
+          },
+        ],
+        name: "setServiceAdmin",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
       },
       {
         anonymous: false,
@@ -3859,6 +3921,13 @@ const Profile = () => {
         type: "event",
       },
       {
+        inputs: [],
+        name: "unpause",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
         anonymous: false,
         inputs: [
           {
@@ -3872,55 +3941,54 @@ const Profile = () => {
         type: "event",
       },
       {
-        inputs: [],
-        name: "ServiceAdmin",
-        outputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "TenupAdmin",
-        outputs: [
-          {
-            internalType: "address",
-            name: "",
-            type: "address",
-          },
-        ],
-        stateMutability: "view",
-        type: "function",
-      },
-      {
-        inputs: [],
-        name: "TenupBalance",
-        outputs: [
+        inputs: [
           {
             internalType: "uint256",
-            name: "",
+            name: "amount",
             type: "uint256",
           },
         ],
-        stateMutability: "view",
+        name: "withdrawTenup",
+        outputs: [],
+        stateMutability: "nonpayable",
         type: "function",
       },
       {
-        inputs: [],
-        name: "TenupToken",
-        outputs: [
+        inputs: [
           {
-            internalType: "contract IERC20",
-            name: "",
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "token",
             type: "address",
           },
+          {
+            internalType: "address",
+            name: "to",
+            type: "address",
+          },
+          {
+            internalType: "uint256",
+            name: "nonce",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "deadline",
+            type: "uint256",
+          },
+          {
+            internalType: "bytes",
+            name: "signature",
+            type: "bytes",
+          },
         ],
-        stateMutability: "view",
+        name: "withdrawTenupToken",
+        outputs: [],
+        stateMutability: "nonpayable",
         type: "function",
       },
       {
@@ -3968,13 +4036,6 @@ const Profile = () => {
       },
       {
         inputs: [],
-        name: "pause",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [],
         name: "paused",
         outputs: [
           {
@@ -3987,46 +4048,55 @@ const Profile = () => {
         type: "function",
       },
       {
-        inputs: [
+        inputs: [],
+        name: "ServiceAdmin",
+        outputs: [
           {
             internalType: "address",
-            name: "from",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "token",
+            name: "",
             type: "address",
           },
         ],
-        name: "receiveTokens",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "address",
-            name: "_ServiceAdmin",
-            type: "address",
-          },
-        ],
-        name: "setServiceAdmin",
-        outputs: [],
-        stateMutability: "nonpayable",
+        stateMutability: "view",
         type: "function",
       },
       {
         inputs: [],
-        name: "unpause",
-        outputs: [],
-        stateMutability: "nonpayable",
+        name: "TenupAdmin",
+        outputs: [
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "tenupBalance",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "TenupToken",
+        outputs: [
+          {
+            internalType: "contract IERC20",
+            name: "",
+            type: "address",
+          },
+        ],
+        stateMutability: "view",
         type: "function",
       },
       {
@@ -4092,60 +4162,9 @@ const Profile = () => {
         stateMutability: "view",
         type: "function",
       },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-        ],
-        name: "withdrawTenup",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
-      {
-        inputs: [
-          {
-            internalType: "uint256",
-            name: "amount",
-            type: "uint256",
-          },
-          {
-            internalType: "address",
-            name: "token",
-            type: "address",
-          },
-          {
-            internalType: "address",
-            name: "to",
-            type: "address",
-          },
-          {
-            internalType: "uint256",
-            name: "nonce",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "deadline",
-            type: "uint256",
-          },
-          {
-            internalType: "bytes",
-            name: "signature",
-            type: "bytes",
-          },
-        ],
-        name: "withdrawTenupUser",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-      },
     ];
 
-    const stakingContractAddress = "0x70a74F1D5640beEC9669abd53034be25dc91eCC2";
+    const stakingContractAddress = "0x1c588e39e574277edf13f45aa2f4e4a111ac81b7";
     // const stakingContractAddress =   "0x62Bc2328a27e258E61Ee7d0cdcb7124F979150d9";
 
     const stakeTokenContractAddress =
@@ -4161,12 +4180,12 @@ const Profile = () => {
       stakingAbi,
       signer
     );
+
     const stakeTokenContract = new Contract(
       stakeTokenContractAddress,
       stakeTokenAbi,
       signer
     );
-
 
     if (!lendAmount || !stakingContract) {
       console.error("Lend amount and staking contract are required");
@@ -4178,15 +4197,17 @@ const Profile = () => {
       const amount = ethers.utils.parseUnits(lendAmount, 18);
       const from = walletAddress;
       const token = stakeTokenContractAddress;
-      const txnLend = await stakingContract.receiveTokens(from, amount, token);
+      const txnLend = await stakingContract.receiveTokens(amount, token);
       await txnLend.wait();
       console.log("Lend transaction confirmed");
     } catch (error) {
-      if (error.code === 'TRANSACTION_REPLACED') {
-        if (error.replacement.reason === 'repriced') {
+      if (error.code === "TRANSACTION_REPLACED") {
+        if (error.replacement.reason === "repriced") {
           console.log("Transaction was replaced with a higher gas price");
         } else {
-          console.error("Transaction was replaced with a different transaction");
+          console.error(
+            "Transaction was replaced with a different transaction"
+          );
         }
       } else {
         console.error("Error during lending:", error);
@@ -4194,11 +4215,6 @@ const Profile = () => {
     }
     setLoading(false);
   };
-  
-
-
-
-
 
   return (
     <div>
@@ -4227,10 +4243,6 @@ const Profile = () => {
         </div>
       </nav>
       <div>
-
-
-
-        
         <div>
           <input
             type="text"
@@ -4240,8 +4252,6 @@ const Profile = () => {
           />
           <button onClick={handleApprove}>Approve Tokens</button>
         </div>
-
-
 
         <div>
           {/* <input
@@ -4253,9 +4263,6 @@ const Profile = () => {
           <button onClick={handleLend}>Lend Tokens</button>
         </div>
 
-
-
-
         <div>
           <input
             type="text"
@@ -4265,8 +4272,6 @@ const Profile = () => {
           />
           <button onClick={handleWithdrawal}>Withdraw Tokens</button>
         </div>
-
-
       </div>
     </div>
   );

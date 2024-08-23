@@ -1,45 +1,45 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useState } from "react";
 import { auth, db } from "./firebase";
 import { setDoc, doc } from "firebase/firestore";
 import { toast } from "react-toastify";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fname, setFname] = useState("");
   const [lname, setLname] = useState("");
+  const [errorMsg, setErrorMsg] = useState(""); // Define setErrorMsg
+  const [submitButtonDisabled, setSubmitButtonDisabled] = useState(false); // Define setSubmitButtonDisabled
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      const user = auth.currentUser;
-      console.log(user);
-      if (user) {
-        await setDoc(doc(db, "Users", user.uid), {
-          email: user.email,
-          firstName: fname,
-          lastName: lname,
-          photo:""
-        });
-      }
-      console.log("User Registered Successfully!!");
-      toast.success("User Registered Successfully!!", {
-        position: "top-center",
-      });
-    } catch (error) {
-      console.log(error.message);
-      toast.error(error.message, {
-        position: "bottom-center",
-      });
+  const handleSubmission = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (!fname || !lname || !password) {
+      setErrorMsg("Fill all fields");
+      return;
     }
+    setErrorMsg("");
+
+    setSubmitButtonDisabled(true);
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(async (res) => {
+        setSubmitButtonDisabled(false);
+        const user = res.user;
+        await updateProfile(user, {
+          displayName: `${fname} ${lname}`,
+        });
+      })
+      .catch((err) => {
+        setSubmitButtonDisabled(false);
+        setErrorMsg(err.message);
+      });
   };
 
-
   return (
-    <form onSubmit={handleRegister}>
+    <form onSubmit={handleSubmission}>
       <h3>Sign Up</h3>
+
+      {errorMsg && <div className="error-message">{errorMsg}</div>} {/* Display error message */}
 
       <div className="mb-3">
         <label>First name</label>
@@ -59,6 +59,7 @@ function Register() {
           className="form-control"
           placeholder="Last name"
           onChange={(e) => setLname(e.target.value)}
+          required
         />
       </div>
 
@@ -85,7 +86,7 @@ function Register() {
       </div>
 
       <div className="d-grid">
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary" disabled={submitButtonDisabled}>
           Sign Up
         </button>
       </div>
@@ -95,4 +96,5 @@ function Register() {
     </form>
   );
 }
+
 export default Register;
