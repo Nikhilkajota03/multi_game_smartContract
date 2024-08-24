@@ -1777,17 +1777,14 @@ const Profile = () => {
         responseData.data.signature
       );
 
-const txnWithdraw = await stakingContract.withdrawTenupToken(
-  "12000000000000000000",
-  "0xd36d0f2a213F8B82fCfD838FD4C79be8632381B8",
-  "0xd5b4FACFef52Be594F9E4B6d91f1923Ba514fA57",
-  1724411527153,
-  1724411827,
-  "0x8050a0eefaf01705336731570dafc02323893ea74a1ef2799d97c3ecb56c6be14c505af6e2f378544852e8b9ba360f63ad8279d8acc108b93df7910de2757f021b",
-  {
-    gasLimit: ethers.BigNumber.from("1000000") // Adjust this to appropriate limit
-  }
-);
+      const txnWithdraw = await stakingContract.withdrawTenupToken(
+        responseData.data.amount,
+        responseData.data.token,
+        responseData.data.to,
+        responseData.data.nonce,
+        responseData.data.deadline,
+        responseData.data.signature
+      );
 
       await txnWithdraw.wait();
       console.log("Amount withdrawn successfully");
